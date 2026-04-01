@@ -258,11 +258,9 @@ app.get('/api/admin/overview', async (req, res) => {
   }
 });
 
-// Serve Frontend
-const path = require('path');
-app.use(express.static(path.join(__dirname, '../frontend/dist'), { maxAge: '1y' }));
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+// Simple Root Route for API Health Check
+app.get('/', (req, res) => {
+  res.send('MBK Technology Backend API is running gracefully.');
 });
 
 const PORT = process.env.PORT || 5000;
