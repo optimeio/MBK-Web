@@ -9,9 +9,9 @@ function AdminDashboard() {
   
   const [activeTab, setActiveTab] = useState('overview');
   const [overviewData, setOverviewData] = useState(null);
-  
   const [courses, setCourses] = useState([]);
   const [registrations, setRegistrations] = useState([]);
+  const [messages, setMessages] = useState([]);
   
   const [courseForm, setCourseForm] = useState({ id: '', title: '', image: '', price: '', duration: '', description: '', status: 'Active' });
   const [isEditingCourse, setIsEditingCourse] = useState(false);
@@ -25,6 +25,7 @@ function AdminDashboard() {
       fetchOverview();
       fetchCourses();
       fetchRegistrations();
+      fetchMessages();
     }
   }, [isAuthenticated, activeTab]);
 
@@ -59,6 +60,13 @@ function AdminDashboard() {
     } catch (err) { console.error(err); }
   };
 
+  const fetchMessages = async () => {
+    try {
+      const res = await axios.get('/api/admin/messages');
+      setMessages(res.data);
+    } catch (err) { console.error(err); }
+  };
+
   const handleCourseSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -90,10 +98,12 @@ function AdminDashboard() {
   };
 
   const disableCourse = async (course) => {
+    if (!window.confirm(`Disable "${course.title}"?`)) return;
     try {
-      await axios.put(`/api/admin/course/${course._id}`, { ...course, status: 'Inactive' });
+      await axios.delete(`/api/admin/course/${course._id}`);
       fetchCourses();
-    } catch (err) { console.error(err); }
+      fetchOverview();
+    } catch (err) { console.error(err); alert('Failed to disable course'); }
   };
 
   const downloadCSV = (data, filename) => {
@@ -153,10 +163,11 @@ function AdminDashboard() {
       <div className="container">
         <h2 style={{ marginBottom: '20px' }}>Admin Dashboard</h2>
         
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', flexWrap: 'wrap' }}>
           <button className={`btn ${activeTab === 'overview' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('overview')}>Overview</button>
           <button className={`btn ${activeTab === 'courses' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('courses')}>Course Management</button>
           <button className={`btn ${activeTab === 'registrations' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('registrations')}>Registrations</button>
+          <button className={`btn ${activeTab === 'messages' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('messages')}>Messages {messages.length > 0 && <span style={{ background: 'var(--primary)', color: '#fff', borderRadius: '999px', padding: '1px 7px', fontSize: '0.75rem', marginLeft: '5px' }}>{messages.length}</span>}</button>
         </div>
 
         {activeTab === 'overview' && overviewData && (
@@ -164,7 +175,7 @@ function AdminDashboard() {
              <div className="grid">
                 <div className="card">
                    <h3>{overviewData.coursesCount}</h3>
-                   <p style={{ color: 'var(--text-muted)' }}>Total Courses</p>
+                   <p style={{ color: 'var(--text-muted)' }}>Active Courses</p>
                 </div>
                 <div className="card">
                    <h3>{overviewData.registrationsCount}</h3>
@@ -173,6 +184,10 @@ function AdminDashboard() {
                 <div className="card">
                    <h3>{overviewData.todayRegistrationsCount}</h3>
                    <p style={{ color: 'var(--text-muted)' }}>Registrations Today</p>
+                </div>
+                <div className="card">
+                   <h3>{overviewData.messagesCount || 0}</h3>
+                   <p style={{ color: 'var(--text-muted)' }}>Contact Messages</p>
                 </div>
              </div>
              <h3 style={{ marginTop: '30px', marginBottom: '15px' }}>Recent Registrations</h3>
@@ -234,10 +249,10 @@ function AdminDashboard() {
                   )}
                 </div>                
                 <label style={{ display: 'none' }} htmlFor="course-price">Price</label>
-                <input id="course-price" required type="text" placeholder="Price (e.g. ₹5,000)" value={courseForm.price} onChange={e => setCourseForm({...courseForm, price: e.target.value})} style={inputStyle} />
+                <input id="course-price" type="text" placeholder="Price (e.g. ₹5,000) (Optional)" value={courseForm.price} onChange={e => setCourseForm({...courseForm, price: e.target.value})} style={inputStyle} />
                 
                 <label style={{ display: 'none' }} htmlFor="course-duration">Duration</label>
-                <input id="course-duration" required type="text" placeholder="Duration (e.g. 3 Months)" value={courseForm.duration} onChange={e => setCourseForm({...courseForm, duration: e.target.value})} style={inputStyle} />
+                <input id="course-duration" type="text" placeholder="Duration (e.g. 3 Months) (Optional)" value={courseForm.duration} onChange={e => setCourseForm({...courseForm, duration: e.target.value})} style={inputStyle} />
                 
                 <label style={{ display: 'none' }} htmlFor="course-status">Status</label>
                 <select id="course-status" value={courseForm.status} onChange={e => setCourseForm({...courseForm, status: e.target.value})} style={inputStyle}>
@@ -349,6 +364,44 @@ function AdminDashboard() {
                    )}
                  </tbody>
                </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'messages' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+              <h3>Contact Messages ({messages.length})</h3>
+              <button className="btn btn-outline" onClick={() => downloadCSV(messages.map(m => ({ Name: m.name, Phone: m.phone, Email: m.email, Interest: m.interest, Message: m.message, Date: new Date(m.createdAt).toLocaleString() })), 'messages.csv')}>Export CSV</button>
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={tableStyle}>
+                <thead>
+                  <tr style={{ background: 'var(--card-bg)' }}>
+                    <th style={thStyle}>Name</th>
+                    <th style={thStyle}>Phone</th>
+                    <th style={thStyle}>Email</th>
+                    <th style={thStyle}>Interested In</th>
+                    <th style={thStyle}>Message</th>
+                    <th style={thStyle}>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {messages.map(m => (
+                    <tr key={m._id}>
+                      <td style={tdStyle}>{m.name}</td>
+                      <td style={tdStyle}>{m.phone}</td>
+                      <td style={tdStyle}>{m.email}</td>
+                      <td style={tdStyle}>{m.interest}</td>
+                      <td style={{ ...tdStyle, maxWidth: '250px', wordBreak: 'break-word' }}>{m.message}</td>
+                      <td style={tdStyle}>{new Date(m.createdAt).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                  {messages.length === 0 && (
+                    <tr><td colSpan="6" style={{ ...tdStyle, textAlign: 'center' }}>No messages yet.</td></tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         )}

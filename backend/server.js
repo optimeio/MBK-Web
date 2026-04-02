@@ -8,7 +8,11 @@ const app = express();
 app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
-app.use(cors());
+app.use(cors({
+  origin: ['https://mbktechnologies.info', 'http://localhost:5173', 'http://localhost:5174'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 
 // Connect to MongoDB
 const dbURI = process.env.MONGO_URI;
@@ -63,13 +67,16 @@ app.get('/api/courses', async (req, res) => {
 
 const nodemailer = require('nodemailer');
 
-// Setup Nodemailer transporter
+// Setup Nodemailer transporter (use SMTP for reliability)
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
   auth: {
-    user: 'thesmgroups@gmail.com', 
-    pass: 'doswdcnaynncomuy' 
-  }
+    user: 'thesmgroups@gmail.com',
+    pass: 'doswdcnaynncomuy'
+  },
+  tls: { rejectUnauthorized: false }
 });
 
 app.post('/api/register', async (req, res) => {
@@ -219,6 +226,15 @@ app.put('/api/admin/course/:id', async (req, res) => {
   }
 });
 
+app.delete('/api/admin/course/:id', async (req, res) => {
+  try {
+    await Course.findByIdAndUpdate(req.params.id, { status: 'Inactive' });
+    res.json({ message: 'Course disabled' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/admin/courses', async (req, res) => {
   try {
     const courses = await Course.find();
@@ -239,20 +255,23 @@ app.get('/api/admin/registrations', async (req, res) => {
 
 app.get('/api/admin/overview', async (req, res) => {
   try {
-    const coursesCount = await Course.countDocuments();
+    const coursesCount = await Course.countDocuments({ status: 'Active' });
     const registrationsCount = await Registration.countDocuments();
     const today = new Date();
     today.setHours(0,0,0,0);
     const todayRegistrationsCount = await Registration.countDocuments({ createdAt: { $gte: today } });
-    
     const recentRegistrations = await Registration.find().sort({ createdAt: -1 }).limit(5).populate('courseId');
-    
-    res.json({
-      coursesCount,
-      registrationsCount,
-      todayRegistrationsCount,
-      recentRegistrations
-    });
+    const messagesCount = await Message.countDocuments();
+    res.json({ coursesCount, registrationsCount, todayRegistrationsCount, recentRegistrations, messagesCount });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/admin/messages', async (req, res) => {
+  try {
+    const messages = await Message.find().sort({ createdAt: -1 });
+    res.json(messages);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
