@@ -43,6 +43,24 @@ function Home() {
     fetchCourses();
   }, []);
 
+  // Re-run reveal observer whenever courses load so cards animate in
+  useEffect(() => {
+    if (courses.length === 0) return;
+    const timer = setTimeout(() => {
+      const revealEls = document.querySelectorAll('.reveal:not(.active), .reveal-left:not(.active), .reveal-right:not(.active), .reveal-scale:not(.active)');
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
+      revealEls.forEach(el => obs.observe(el));
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [courses]);
+
   const openRegisterModal = (course) => {
     setSelectedCourse(course);
     setShowModal(true);
@@ -345,7 +363,7 @@ function Home() {
                 <div style={{ gridColumn: '1 / -1', textAlign: 'center' }}>No active courses found.</div>
               ) : (
                 courses.slice(0, visibleCount).map((course, index) => (
-                  <div className="card reveal" style={{ transitionDelay: `${(index % 4) * 0.1}s`, display: 'flex', flexDirection: 'column' }} key={course._id}>
+                  <div className="card" style={{ transitionDelay: `${(index % 4) * 0.08}s`, display: 'flex', flexDirection: 'column', animation: 'fadeInUp 0.5s ease forwards', opacity: 1 }} key={course._id}>
                     {course.image && (
                       <div style={{ margin: '-3rem -3rem 1.5rem -3rem', overflow: 'hidden', height: '220px', borderRadius: 'var(--radius-md) var(--radius-md) 0 0' }}>
                         <img src={course.image} alt={course.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
