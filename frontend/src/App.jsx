@@ -1,64 +1,78 @@
 import Icon from './components/Icon';
-import { useEffect } from 'react';
-import { MemoryRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
-import Courses from './pages/Courses';
-import About from './pages/About';
-import Services from './pages/Services';
-import Contact from './pages/Contact';
-import AdminDashboard from './pages/AdminDashboard';
-import LMSLogin from './pages/LMSLogin';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import ChatWidget from './components/ChatWidget';
+
+// Lazy load heavy pages to reduce initial bundle & speed up first paint
+const Courses = lazy(() => import('./pages/Courses'));
+const About = lazy(() => import('./pages/About'));
+const Services = lazy(() => import('./pages/Services'));
+const Contact = lazy(() => import('./pages/Contact'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const LMSLogin = lazy(() => import('./pages/LMSLogin'));
+const ChatWidget = lazy(() => import('./components/ChatWidget'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return null;
 }
 
+const PageLoader = () => (
+  <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '1rem' }}>
+    Loading...
+  </div>
+);
+
 function App() {
   useEffect(() => {
-    // 1. Unmount original page loader smoothly on first render
     const loader = document.getElementById('page-loader');
     if (loader) {
       setTimeout(() => {
         loader.style.opacity = '0';
         setTimeout(() => {
           loader.style.display = 'none';
-          document.body.classList.add('loaded'); // Activates initial CSS reveals
-        }, 800);
-      }, 500); // Give React 500ms to paint DOM
+          document.body.classList.add('loaded');
+        }, 600);
+      }, 400);
+    }
+
+    // Cursor glow
+    const glow = document.getElementById('cursor-glow');
+    if (glow) {
+      const handleMove = (e) => {
+        glow.style.transform = `translate(${e.clientX - 160}px, ${e.clientY - 160}px)`;
+      };
+      window.addEventListener('mousemove', handleMove, { passive: true });
+      return () => window.removeEventListener('mousemove', handleMove);
     }
   }, []);
-
-  if (window.location.pathname.startsWith('/admin')) {
-    return <AdminDashboard />;
-  }
 
   return (
     <Router>
       <ScrollToTop />
-      {/* Global Elements */}
       <div id="cursor-glow" style={{ position: 'fixed', width: '320px', height: '320px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(249,115,22,0.07) 0%,transparent 70%)', pointerEvents: 'none', zIndex: 1, transition: 'transform 0.08s linear' }}></div>
       <Navbar />
-      
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/courses" element={<Courses />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/lms" element={<LMSLogin />} />
-      </Routes>
+
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/lms" element={<LMSLogin />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="*" element={<Home />} />
+        </Routes>
+      </Suspense>
 
       <Footer />
-      <ChatWidget />
+      <Suspense fallback={null}>
+        <ChatWidget />
+      </Suspense>
 
       <button id="scrollTop" aria-label="Scroll to top"><Icon name="chevron-up" style={{ width: '20px', height: '20px' }} /></button>
     </Router>

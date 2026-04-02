@@ -24,15 +24,21 @@ function Home() {
   });
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetchCourses = async (retries = 3) => {
       try {
-        const res = await axios.get('/api/courses');
+        const res = await axios.get('/api/courses', { timeout: 30000 });
         setCourses(res.data);
       } catch (err) {
-        console.error('Error fetching courses:', err);
-      } finally {
-        setLoading(false);
+        if (retries > 0) {
+          console.log(`Retrying courses fetch... (${retries} left)`);
+          setTimeout(() => fetchCourses(retries - 1), 3000);
+        } else {
+          console.error('Error fetching courses:', err);
+          setLoading(false);
+        }
+        return;
       }
+      setLoading(false);
     };
     fetchCourses();
   }, []);
@@ -80,9 +86,10 @@ function Home() {
     }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
     revealEls.forEach(el => revealObserver.observe(el));
 
-    // Particle script
+    // Particle script - disabled on mobile for performance
     const canvas = document.getElementById('particle-canvas');
-    if (canvas) {
+    const isMobile = window.innerWidth < 768;
+    if (canvas && !isMobile) {
       const ctx = canvas.getContext('2d');
       let W = canvas.width = window.innerWidth;
       let H = canvas.height = window.innerHeight;
@@ -328,7 +335,8 @@ function Home() {
 
           {loading ? (
             <div style={{ textAlign: 'center', padding: '50px' }}>
-              <h3>Loading courses...</h3>
+              <div style={{ width: '40px', height: '40px', border: '3px solid var(--border)', borderTop: '3px solid var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 1rem' }}></div>
+              <p style={{ color: 'var(--text-muted)' }}>Loading courses... (may take a moment on first load)</p>
             </div>
           ) : (
             <>
