@@ -13,6 +13,7 @@ const Contact = lazy(() => import('./pages/Contact'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const LMSLogin = lazy(() => import('./pages/LMSLogin'));
 const ChatWidget = lazy(() => import('./components/ChatWidget'));
+const CourseDetails = lazy(() => import('./pages/CourseDetails'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -60,6 +61,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/courses" element={<Courses />} />
+          <Route path="/course/:id" element={<CourseDetails />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
           <Route path="/contact" element={<Contact />} />

@@ -2,6 +2,7 @@ import Icon from '../components/Icon';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 
 function Courses() {
   const [courses, setCourses] = useState([]);
@@ -116,9 +117,14 @@ function Courses() {
                       {course.price && <p><Icon name="tag" style={{ width: '16px', height: '16px', display: 'inline', marginRight: '5px' }} /> Price: {course.price}</p>}
                       <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>{course.description}</p>
                     </div>
-                    <button className="btn btn-primary" onClick={() => openRegisterModal(course)} style={{ width: '100%', justifyContent: 'center' }}>
-                      Register Now
-                    </button>
+                    <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
+                      <Link to={`/course/${course._id}`} className="btn btn-outline" style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}>
+                        View Details
+                      </Link>
+                      <button className="btn btn-primary" onClick={() => openRegisterModal(course)} style={{ flex: 1, justifyContent: 'center' }}>
+                        Register Now
+                      </button>
+                    </div>
                   </div>
                 ))
               )}

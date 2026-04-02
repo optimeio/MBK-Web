@@ -425,14 +425,18 @@ function Home() {
                       }}>
                         {course.description || 'A comprehensive training program designed for industry readiness.'}
                       </p>
-
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => openRegisterModal(course)}
-                        style={{ width: '100%', justifyContent: 'center', fontSize: '0.9rem', padding: '0.75rem' }}
-                      >
-                        Register Now
-                      </button>
+                      <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
+                        <Link to={`/course/${course._id}`} className="btn btn-outline" style={{ flex: 1, textAlign: 'center', fontSize: '0.9rem', padding: '0.75rem' }}>
+                          View Details
+                        </Link>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => openRegisterModal(course)}
+                          style={{ flex: 1, justifyContent: 'center', fontSize: '0.9rem', padding: '0.75rem' }}
+                        >
+                          Register Now
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))
