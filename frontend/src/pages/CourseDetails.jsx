@@ -12,15 +12,20 @@ function CourseDetails() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const fetchCourse = async () => {
+    const fetchCourse = async (retries = 3) => {
       try {
-        const res = await axios.get('/api/courses');
+        const res = await axios.get('/api/courses', { timeout: 30000 });
         const found = res.data.find(c => c._id === id);
         setCourse(found);
-      } catch (err) {
-        console.error('Error fetching course:', err);
-      } finally {
         setLoading(false);
+      } catch (err) {
+        if (retries > 0) {
+          console.log(`Retrying course fetch... (${retries} left)`);
+          setTimeout(() => fetchCourse(retries - 1), 3000);
+        } else {
+          console.error('Error fetching course:', err);
+          setLoading(false);
+        }
       }
     };
     fetchCourse();
