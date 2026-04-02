@@ -73,7 +73,7 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: process.env.MAIL_USER || 'thesmgroups@gmail.com',
+    user: process.env.MAIL_USER || 'mbktechnologies8@gmail.com',
     pass: process.env.MAIL_PASS || 'doswdcnaynncomuy'
   }
 });
@@ -96,9 +96,9 @@ app.post('/api/register', async (req, res) => {
         if (course) courseName = course.title;
     }
 
-    // Send Notification to MBK
+    // Send Notification to MBK owner
     const mailOptions = {
-      from: '"MBK Tech Notifications" <thesmgroups@gmail.com>',
+      from: '"MBK Technology" <mbktechnologies8@gmail.com>',
       to: 'mbktechnologies8@gmail.com',
       subject: `New Course Registration: ${req.body.studentName}`,
       html: `
@@ -115,7 +115,7 @@ app.post('/api/register', async (req, res) => {
 
     // Auto-Reply to Student
     const autoReplyOptions = {
-        from: '"MBK Technology" <thesmgroups@gmail.com>',
+        from: '"MBK Technology" <mbktechnologies8@gmail.com>',
         to: req.body.email,
         subject: `Registration Confirmed - MBK Technology`,
         html: `
@@ -153,9 +153,9 @@ app.post('/api/contact', async (req, res) => {
     const newMessage = new Message(req.body);
     await newMessage.save();
 
-    // Send Notification to MBK
+    // Send Notification to MBK owner
     const mailOptions = {
-        from: '"MBK Tech Website" <thesmgroups@gmail.com>',
+        from: '"MBK Technology Website" <mbktechnologies8@gmail.com>',
         to: 'mbktechnologies8@gmail.com',
         subject: `New Contact Form Submission: ${req.body.name}`,
         html: `
@@ -170,7 +170,7 @@ app.post('/api/contact', async (req, res) => {
 
     // Auto-Reply to User
     const autoReplyOptions = {
-        from: '"MBK Technology" <thesmgroups@gmail.com>',
+        from: '"MBK Technology" <mbktechnologies8@gmail.com>',
         to: req.body.email,
         subject: `We've Received Your Message - MBK Technology`,
         html: `
