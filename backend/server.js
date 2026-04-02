@@ -67,16 +67,21 @@ app.get('/api/courses', async (req, res) => {
 
 const nodemailer = require('nodemailer');
 
-// Setup Nodemailer transporter (use SMTP for reliability)
+// Setup Nodemailer transporter (SMTP - works on Render/cloud hosts)
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
+  port: 465,
+  secure: true,
   auth: {
-    user: 'thesmgroups@gmail.com',
-    pass: 'doswdcnaynncomuy'
-  },
-  tls: { rejectUnauthorized: false }
+    user: process.env.MAIL_USER || 'thesmgroups@gmail.com',
+    pass: process.env.MAIL_PASS || 'doswdcnaynncomuy'
+  }
+});
+
+// Test SMTP connection on startup
+transporter.verify((err, success) => {
+  if (err) console.error('SMTP Connection Error:', err.message);
+  else console.log('SMTP Ready: Emails will send correctly.');
 });
 
 app.post('/api/register', async (req, res) => {
