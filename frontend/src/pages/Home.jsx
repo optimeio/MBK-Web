@@ -360,31 +360,90 @@ function Home() {
             <>
             <div className="grid">
               {courses.length === 0 ? (
-                <div style={{ gridColumn: '1 / -1', textAlign: 'center' }}>No active courses found.</div>
+                <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No active courses available at the moment.</div>
               ) : (
                 courses.slice(0, visibleCount).map((course, index) => (
-                  <div className="card" style={{ transitionDelay: `${(index % 4) * 0.08}s`, display: 'flex', flexDirection: 'column', animation: 'fadeInUp 0.5s ease forwards', opacity: 1 }} key={course._id}>
-                    {course.image && (
-                      <div style={{ margin: '-3rem -3rem 1.5rem -3rem', overflow: 'hidden', height: '220px', borderRadius: 'var(--radius-md) var(--radius-md) 0 0' }}>
-                        <img src={course.image} alt={course.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      </div>
-                    )}
-                    <h3 style={{ fontSize: '1.3rem' }}>{course.title}</h3>
-                    <div style={{ marginBottom: '1.5rem', color: 'var(--text-muted)', flexGrow: 1 }}>
-                      {course.duration && <p style={{ marginBottom: '0.4rem', fontSize: '0.95rem' }}><Icon name="clock" style={{ width: '16px', height: '16px', display: 'inline', marginRight: '5px', verticalAlign: 'middle' }} /> Duration: {course.duration}</p>}
-                      {course.price && <p style={{ marginBottom: '0.4rem', fontSize: '0.95rem' }}><Icon name="tag" style={{ width: '16px', height: '16px', display: 'inline', marginRight: '5px', verticalAlign: 'middle' }} /> Price: {course.price}</p>}
-                      <p style={{ marginTop: '0.8rem', fontSize: '0.9rem', lineHeight: '1.6' }}>{course.description}</p>
+                  <div
+                    className="card"
+                    key={course._id}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      padding: 0,
+                      overflow: 'hidden',
+                      animation: `fadeInUp 0.4s ease ${(index % 4) * 0.08}s both`,
+                    }}
+                  >
+                    {/* Course Image */}
+                    <div style={{ width: '100%', height: '180px', overflow: 'hidden', flexShrink: 0 }}>
+                      {course.image ? (
+                        <img
+                          src={course.image}
+                          alt={course.title}
+                          loading="lazy"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        />
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, var(--primary), #b45309)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Icon name="book-open" style={{ width: '40px', height: '40px', color: 'white', opacity: 0.7 }} />
+                        </div>
+                      )}
                     </div>
-                    <button className="btn btn-primary" onClick={() => openRegisterModal(course)} style={{ width: '100%', justifyContent: 'center', marginTop: 'auto' }}>
-                      Register Now
-                    </button>
+
+                    {/* Card Body */}
+                    <div style={{ padding: '1.4rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                      <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.6rem', lineHeight: 1.4, color: 'var(--text-main)' }}>
+                        {course.title}
+                      </h3>
+
+                      {/* Meta Row */}
+                      <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.8rem', flexWrap: 'wrap' }}>
+                        {course.duration && (
+                          <span style={{ fontSize: '0.82rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Icon name="clock" style={{ width: '13px', height: '13px' }} /> {course.duration}
+                          </span>
+                        )}
+                        {course.price && (
+                          <span style={{ fontSize: '0.82rem', color: '#4ade80', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Icon name="tag" style={{ width: '13px', height: '13px' }} /> {course.price}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Description — truncated to 3 lines */}
+                      <p style={{
+                        fontSize: '0.875rem',
+                        color: 'var(--text-muted)',
+                        lineHeight: 1.6,
+                        flexGrow: 1,
+                        marginBottom: '1.2rem',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}>
+                        {course.description || 'A comprehensive training program designed for industry readiness.'}
+                      </p>
+
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => openRegisterModal(course)}
+                        style={{ width: '100%', justifyContent: 'center', fontSize: '0.9rem', padding: '0.75rem' }}
+                      >
+                        Register Now
+                      </button>
+                    </div>
                   </div>
                 ))
               )}
             </div>
+
             {visibleCount < courses.length && (
-              <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-                 <button className="btn btn-outline" onClick={() => setVisibleCount(courses.length)}>Load More Programs</button>
+              <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+                <button className="btn btn-outline" onClick={() => setVisibleCount(courses.length)}>
+                  Load More Programs ({courses.length - visibleCount} more)
+                </button>
               </div>
             )}
             </>
