@@ -5,8 +5,8 @@ import axios from 'axios'
 import './index.css'
 import App from './App.jsx'
 
-// Point to Render backend in production, otherwise use Vite proxy on local
-axios.defaults.baseURL = import.meta.env.MODE === 'production' ? 'https://mbk-web.onrender.com' : '';
+const backendUrl = import.meta.env.VITE_BACKEND_URL || (import.meta.env.MODE === 'production' ? 'https://mbk-web-1.onrender.com' : '');
+axios.defaults.baseURL = backendUrl;
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

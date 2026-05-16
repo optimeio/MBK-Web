@@ -20,7 +20,6 @@ function CourseDetails() {
         setLoading(false);
       } catch (err) {
         if (retries > 0) {
-          console.log(`Retrying course fetch... (${retries} left)`);
           setTimeout(() => fetchCourse(retries - 1), 3000);
         } else {
           console.error('Error fetching course:', err);
@@ -54,10 +53,10 @@ function CourseDetails() {
         <title>{course.title} | MBK Technology</title>
         <meta name="description" content={course.description.substring(0, 150)} />
       </Helmet>
-      
+
       <div style={{ paddingTop: '120px', paddingBottom: '80px', background: 'var(--bg-main)' }}>
         <div className="container" style={{ maxWidth: '900px' }}>
-          
+
           <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2rem', fontSize: '1.05rem', fontWeight: 'bold', padding: 0 }}>
             {/* simple SVG arrow so we don't rely on Icon matching perfectly if not updated */}
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
@@ -70,10 +69,10 @@ function CourseDetails() {
                 <img src={course.image} alt={course.title} style={{ maxWidth: '100%', maxHeight: '400px', objectFit: 'contain', display: 'block' }} />
               </div>
             )}
-            
+
             <div style={{ padding: '3rem' }}>
               <h1 style={{ fontSize: '2.4rem', marginBottom: '1.5rem', color: 'var(--text-main)', fontWeight: '800', lineHeight: 1.2 }}>{course.title}</h1>
-              
+
               <div style={{ display: 'flex', gap: '2rem', marginBottom: '2.5rem', flexWrap: 'wrap', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
                 {course.duration && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -86,7 +85,7 @@ function CourseDetails() {
                     </div>
                   </div>
                 )}
-                
+
                 {course.price && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{ background: 'rgba(74, 222, 128, 0.1)', padding: '12px', borderRadius: '50%' }}>

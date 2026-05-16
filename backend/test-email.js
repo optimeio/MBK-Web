@@ -11,7 +11,6 @@ const transporter = nodemailer.createTransport({
 });
 
 async function runTests() {
-  // Verify SMTP connection first
   try {
     await transporter.verify();
     console.log('✅ SMTP Connected Successfully!');

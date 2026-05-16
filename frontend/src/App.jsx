@@ -66,7 +66,7 @@ function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/lms" element={<LMSLogin />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/adminportal" element={<AdminDashboard />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </Suspense>

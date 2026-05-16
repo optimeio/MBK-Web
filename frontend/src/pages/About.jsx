@@ -1,6 +1,7 @@
 import Icon from '../components/Icon';
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Particle } from '../utils/Particle';
 
 function About({ id, hideHero }) {
   useEffect(() => {
@@ -27,32 +28,7 @@ function About({ id, hideHero }) {
       const particles = [];
       const count = Math.min(70, Math.floor(W * H / 18000));
 
-      class Particle {
-        constructor() { this.reset(); }
-        reset() {
-          this.x = Math.random() * W;
-          this.y = Math.random() * H;
-          this.size = Math.random() * 1.5 + 0.4;
-          this.speedX = (Math.random() - 0.5) * 0.4;
-          this.speedY = (Math.random() - 0.5) * 0.4;
-          this.opacity = Math.random() * 0.5 + 0.1;
-          const colors = ['249,115,22', '225,29,72', '139,92,246', '255,255,255'];
-          this.color = colors[Math.floor(Math.random() * colors.length)];
-        }
-        update() {
-          this.x += this.speedX;
-          this.y += this.speedY;
-          if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
-        }
-        draw() {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${this.color},${this.opacity})`;
-          ctx.fill();
-        }
-      }
-
-      for (let i = 0; i < count; i++) particles.push(new Particle());
+      for (let i = 0; i < count; i++) particles.push(new Particle(ctx, W, H));
 
       function connectParticles() {
         for (let a = 0; a < particles.length; a++) {
@@ -83,6 +59,7 @@ function About({ id, hideHero }) {
       const handleResize = () => {
         W = canvas.width = window.innerWidth;
         H = canvas.height = window.innerHeight;
+        particles.forEach(p => p.setBounds(W, H));
       };
       window.addEventListener('resize', handleResize);
 
@@ -92,18 +69,23 @@ function About({ id, hideHero }) {
         revealObserver.disconnect();
       };
     } else {
-        return () => revealObserver.disconnect();
+      return () => revealObserver.disconnect();
     }
-  }, []);
+}, [hideHero]);
 
   return (
     <main id={id}>
       {!hideHero && (
         <>
           <Helmet>
-            <title>About Us | MBK Technology - Engineering Excellence in Salem</title>
-            <meta name="description" content="Learn about MBK Technology, Salem's premier technical training organization. We specialize in Industry 4.0, AI, Electric Vehicles, and Skill Development aligned with Naan Mudhalvan." />
-            <link rel="canonical" href="https://mbktechnologies.info/about" />
+            <title>About Us | MBK Technology - Engineering excellence in Salem</title>
+            <meta name="description" content="Learn about MBK Technology, Salem's premier technical training organization specializing in Industry 4.0, AI, EV, and Skill Development aligned with Naan Mudhalvan." />
+            <link rel="canonical" href="https://website.mbktechnologies.info/about" />
+            <meta property="og:title" content="About Us | MBK Technology" />
+            <meta property="og:description" content="Discover our mission to bridge the gap between academia and industry." />
+            <meta property="og:url" content="https://website.mbktechnologies.info/about" />
+            <meta property="og:type" content="website" />
+            <meta name="robots" content="index, follow" />
           </Helmet>
           <canvas id="particle-canvas" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1, pointerEvents: 'none' }}></canvas>
         </>
@@ -120,11 +102,11 @@ function About({ id, hideHero }) {
           <div className="container" style={{ position: 'relative', zIndex: 2 }}>
             <div className="hero-badge reveal"><span className="dot"></span>About Us</div>
             <h1 className="reveal"
-                style={{ fontSize: 'clamp(2.5rem,6vw,4.5rem)', fontWeight: 900, background: 'linear-gradient(160deg,#fff 0%,#e2e8f0 40%,#94a3b8 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-1px', marginBottom: '1.2rem' }}>
-                About MBK Technology</h1>
+              style={{ fontSize: 'clamp(2.5rem,6vw,4.5rem)', fontWeight: 900, background: 'linear-gradient(160deg,#fff 0%,#e2e8f0 40%,#94a3b8 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-1px', marginBottom: '1.2rem' }}>
+              About MBK Technology</h1>
             <p className="reveal delay-1"
-                style={{ fontSize: '1.15rem', color: 'var(--text-muted)', maxWidth: '580px', lineHeight: 1.85 }}>
-                A State-Level technical training organization based in Salem, Tamil Nadu — driven by excellence, innovation, and measurable impact.
+              style={{ fontSize: '1.15rem', color: 'var(--text-muted)', maxWidth: '580px', lineHeight: 1.85 }}>
+              A State-Level technical training organization based in Salem, Tamil Nadu — driven by excellence, innovation, and measurable impact.
             </p>
           </div>
         </header>
@@ -135,32 +117,32 @@ function About({ id, hideHero }) {
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '4rem', alignItems: 'center' }} className="reveal">
             <div>
-                <span className="section-label">Our Identity</span>
-                <h2 style={{ fontSize: 'clamp(1.8rem,4vw,2.6rem)', margin: '1rem 0 1.5rem', background: 'linear-gradient(135deg,var(--text-main),var(--text-soft))', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
-                    Authority &amp; Excellence</h2>
-                <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', marginBottom: '1.4rem', lineHeight: 1.85, textAlign: 'justify' }}>
-                    MBK Technology maintains a verified network of qualified technical trainers delivering domain-specific training and practical hands-on sessions. We specialize in providing structured, measurable, and scalable training models.
-                </p>
-                <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', lineHeight: 1.85, textAlign: 'justify' }}>
-                    We support <strong style={{ color: 'var(--primary-light)' }}>Naan Mudhalvan</strong> and similar government initiatives with job-oriented skill modules aligned with current industry requirements.
-                </p>
+              <span className="section-label">Our Identity</span>
+              <h2 style={{ fontSize: 'clamp(1.8rem,4vw,2.6rem)', margin: '1rem 0 1.5rem', background: 'linear-gradient(135deg,var(--text-main),var(--text-soft))', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
+                Authority &amp; Excellence</h2>
+              <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', marginBottom: '1.4rem', lineHeight: 1.85, textAlign: 'justify' }}>
+                MBK Technology maintains a verified network of qualified technical trainers delivering domain-specific training and practical hands-on sessions. We specialize in providing structured, measurable, and scalable training models.
+              </p>
+              <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', lineHeight: 1.85, textAlign: 'justify' }}>
+                We support <strong style={{ color: 'var(--primary-light)' }}>Naan Mudhalvan</strong> and similar government initiatives with job-oriented skill modules aligned with current industry requirements.
+              </p>
             </div>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-                <div className="card reveal delay-1" style={{ padding: '1.8rem', background: 'rgba(249,115,22,0.05)' }}>
-                    <h4 style={{ color: 'var(--text-main)', fontSize: '1rem', marginBottom: '0.5rem' }}>
-                        <Icon name="target" style={{ width: '18px', marginRight: '10px', verticalAlign: 'middle', color: 'var(--primary)' }} />
-                        Domain Specific
-                    </h4>
-                    <p style={{ fontSize: '0.9rem' }}>Modules designed for Civil, Mechanical, EV, and IT engineering domains.</p>
-                </div>
-                <div className="card reveal delay-2" style={{ padding: '1.8rem', background: 'rgba(139,92,246,0.05)' }}>
-                    <h4 style={{ color: 'var(--text-main)', fontSize: '1rem', marginBottom: '0.5rem' }}>
-                        <Icon name="shield-check" style={{ width: '18px', marginRight: '10px', verticalAlign: 'middle', color: 'var(--accent)' }} /> 
-                        Gov Aligned
-                    </h4>
-                    <p style={{ fontSize: '0.9rem' }}>Deployment partner supporting state-level skill development initiatives.</p>
-                </div>
+              <div className="card reveal delay-1" style={{ padding: '1.8rem', background: 'rgba(249,115,22,0.05)' }}>
+                <h4 style={{ color: 'var(--text-main)', fontSize: '1rem', marginBottom: '0.5rem' }}>
+                  <Icon name="target" style={{ width: '18px', marginRight: '10px', verticalAlign: 'middle', color: 'var(--primary)' }} />
+                  Domain Specific
+                </h4>
+                <p style={{ fontSize: '0.9rem' }}>Modules designed for Civil, Mechanical, EV, and IT engineering domains.</p>
+              </div>
+              <div className="card reveal delay-2" style={{ padding: '1.8rem', background: 'rgba(139,92,246,0.05)' }}>
+                <h4 style={{ color: 'var(--text-main)', fontSize: '1rem', marginBottom: '0.5rem' }}>
+                  <Icon name="shield-check" style={{ width: '18px', marginRight: '10px', verticalAlign: 'middle', color: 'var(--accent)' }} />
+                  Gov Aligned
+                </h4>
+                <p style={{ fontSize: '0.9rem' }}>Deployment partner supporting state-level skill development initiatives.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -203,14 +185,14 @@ function About({ id, hideHero }) {
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
             <div className="card reveal delay-1" style={{ padding: '4rem' }}>
-                <div style={{ color: 'var(--primary)', marginBottom: '1.5rem' }}><Icon name="rocket" style={{ width: '40px', height: '40px' }} /></div>
-                <h3 style={{ marginBottom: '1.5rem' }}>Our Mission</h3>
-                <p style={{ textAlign: 'justify', color: 'var(--text-muted)', lineHeight: 1.7 }}>To empower engineering students, working professionals, and institutions with structured, industry-relevant training that builds confidence, competence, and career readiness aligned with Industry 4.0.</p>
+              <div style={{ color: 'var(--primary)', marginBottom: '1.5rem' }}><Icon name="rocket" style={{ width: '40px', height: '40px' }} /></div>
+              <h3 style={{ marginBottom: '1.5rem' }}>Our Mission</h3>
+              <p style={{ textAlign: 'justify', color: 'var(--text-muted)', lineHeight: 1.7 }}>To empower engineering students, working professionals, and institutions with structured, industry-relevant training that builds confidence, competence, and career readiness aligned with Industry 4.0.</p>
             </div>
             <div className="card reveal delay-2" style={{ padding: '4rem' }}>
-                <div style={{ color: 'var(--accent)', marginBottom: '1.5rem' }}><Icon name="eye" style={{ width: '40px', height: '40px' }} /></div>
-                <h3 style={{ marginBottom: '1.5rem' }}>Our Vision</h3>
-                <p style={{ textAlign: 'justify', color: 'var(--text-muted)', lineHeight: 1.7 }}>To become Tamil Nadu's most trusted technical training partner by 2030 — recognized for measurable outcomes, certified quality, and scalable solutions.</p>
+              <div style={{ color: 'var(--accent)', marginBottom: '1.5rem' }}><Icon name="eye" style={{ width: '40px', height: '40px' }} /></div>
+              <h3 style={{ marginBottom: '1.5rem' }}>Our Vision</h3>
+              <p style={{ textAlign: 'justify', color: 'var(--text-muted)', lineHeight: 1.7 }}>To become Tamil Nadu's most trusted technical training partner by 2030 — recognized for measurable outcomes, certified quality, and scalable solutions.</p>
             </div>
           </div>
         </div>

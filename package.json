@@ -4,8 +4,12 @@
   "description": "MBK Courses MERN Application",
   "scripts": {
     "postinstall": "cd frontend && npm install && cd ../backend && npm install",
-    "build-all": "cd frontend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:frontend",
+    "build-all": "npm run build:frontend",
+    "start:backend": "cd backend && npm start",
     "start": "cd backend && node server.js",
+    "start:all": "npm run build-all && npm run start",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "cd frontend && npm run dev",
     "dev:backend": "cd backend && node server.js"

@@ -8,13 +8,16 @@ function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <Link to="/" className="logo">
-              <img src="https://i.ibb.co/4wmJCKRq/training.png" alt="MBK Logo" className="logo-img" style={{ height: '40px' }} />
+              <img src="/assets/training.png" alt="MBK Logo" className="logo-img" style={{ height: '60px', filter: 'drop-shadow(0 0 8px rgba(249,115,22,0.4))' }} />
               <div className="logo-text">
                 <span>MBK TECHNOLOGY</span>
-                <div className="tagline">Skills to Success</div>
+                <div className="tagline">Knowledge to Success</div>
               </div>
             </Link>
-            <p>Premium Technical Training &amp; Skill Development in Salem, Tamil Nadu. Official trainer deployment partner for Naan Mudhalvan &amp; government initiatives.</p>
+            <p style={{ marginBottom: '1.5rem' }}>Premium Technical Training &amp; Skill Development in Salem, Tamil Nadu. Official trainer deployment partner for Naan Mudhalvan &amp; government initiatives.</p>
+            <a href="https://g.page/r/CWnSIgOkZnoGEAE/review" target="_blank" rel="noopener noreferrer" className="btn btn-google" style={{ display: 'inline-flex', padding: '0.6rem 1.2rem', fontSize: '0.85rem' }}>
+              <Icon name="star" style={{ width: '14px', height: '14px', fill: '#FBBC05', color: '#FBBC05' }} /> Review Us on Google
+            </a>
           </div>
           <div className="footer-links">
             <h4>Core Programs</h4>
@@ -31,7 +34,7 @@ function Footer() {
             <a href="https://maps.google.com/?q=MBK+Technology+Salem" target="_blank" rel="noopener noreferrer" className="footer-contact-item" style={{ textDecoration: 'none', color: 'inherit' }}><Icon name="map-pin" style={{ width: '16px', height: '16px' }} /><span>259-B, III Floor, OM Shiva Towers, Near DNC Mall, Fairlands, Salem – 636004</span></a>
             <a href="tel:+918807653965" className="footer-contact-item" style={{ textDecoration: 'none', color: 'inherit' }}><Icon name="phone" style={{ width: '16px', height: '16px' }} /><span>+91 88076 53965</span></a>
             <a href="mailto:mbktechnologies8@gmail.com" className="footer-contact-item" style={{ textDecoration: 'none', color: 'inherit' }}><Icon name="mail" style={{ width: '16px', height: '16px' }} /><span>mbktechnologies8@gmail.com</span></a>
-            
+
             <h4 style={{ marginTop: '1.5rem', marginBottom: '0.8rem' }}>Follow Us</h4>
             <div className="social-links" style={{ display: 'flex', gap: '1rem' }}>
               <a href="https://instagram.com/mbktechnology" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)' }} aria-label="Instagram"><Icon name="instagram" /></a>

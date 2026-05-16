@@ -88,8 +88,14 @@ function Courses() {
     <main style={{ paddingTop: '100px', minHeight: '80vh' }}>
       <Helmet>
         <title>Courses & Training Programs | MBK Technology Salem</title>
-        <meta name="description" content="Explore top technical training courses at MBK Technology. We offer programs in Civil, Mechanical, AI, EV, and Software Engineering for students and professionals." />
-        <link rel="canonical" href="https://mbktechnologies.info/courses" />
+        <meta name="description" content="Explore expert-led technical training courses at MBK Technology. Programs in Civil, Mechanical, AI, EV, and Software Engineering designed for job readiness." />
+        <meta name="keywords" content="engineering courses Salem, AI training, EV technology, Full Stack course Salem, technical skill development" />
+        <link rel="canonical" href="https://website.mbktechnologies.info/courses" />
+        <meta property="og:title" content="Training Programs | MBK Technology" />
+        <meta property="og:description" content="Master future-proof skills with our industry-aligned training modules in Salem." />
+        <meta property="og:url" content="https://website.mbktechnologies.info/courses" />
+        <meta property="og:type" content="website" />
+        <meta name="robots" content="index, follow" />
       </Helmet>
       <section className="domains">
         <div className="container">
@@ -123,10 +129,10 @@ function Courses() {
                       <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>{course.description}</p>
                     </div>
                     <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
-                      <Link to={`/course/${course._id}`} className="btn btn-outline" style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}>
+                      <Link to={`/course/${course._id}`} className="btn btn-outline" style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }} aria-label={`View details for ${course.title}`}>
                         View Details
                       </Link>
-                      <button className="btn btn-primary" onClick={() => openRegisterModal(course)} style={{ flex: 1, justifyContent: 'center' }}>
+                      <button className="btn btn-primary" onClick={() => openRegisterModal(course)} style={{ flex: 1, justifyContent: 'center' }} aria-label={`Register for ${course.title}`}>
                         Register Now
                       </button>
                     </div>
@@ -144,21 +150,21 @@ function Courses() {
           <div className="card" style={{ width: '100%', maxWidth: '500px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
             <button onClick={closeRegisterModal} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', color: 'var(--text)' }}>&times;</button>
             <h3 style={{ marginBottom: '1rem' }}>Register for {selectedCourse?.title}</h3>
-            
+
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
                 <label htmlFor="reg-name" style={{ display: 'block', marginBottom: '0.3rem', fontSize: '0.9rem', color: 'var(--text)' }}>Student Name</label>
                 <input id="reg-name" required type="text" name="studentName" value={formData.studentName} onChange={handleInputChange} style={{ width: '100%', padding: '0.8rem', borderRadius: '0.5rem', border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text)' }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                 <div>
-                    <label htmlFor="reg-phone" style={{ display: 'block', marginBottom: '0.3rem', fontSize: '0.9rem', color: 'var(--text)' }}>Phone Number</label>
-                    <input id="reg-phone" required type="text" name="phone" value={formData.phone} onChange={handleInputChange} style={{ width: '100%', padding: '0.8rem', borderRadius: '0.5rem', border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text)' }} />
-                 </div>
-                 <div>
-                    <label htmlFor="reg-email" style={{ display: 'block', marginBottom: '0.3rem', fontSize: '0.9rem', color: 'var(--text)' }}>Email</label>
-                    <input id="reg-email" required type="email" name="email" value={formData.email} onChange={handleInputChange} style={{ width: '100%', padding: '0.8rem', borderRadius: '0.5rem', border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text)' }} />
-                 </div>
+                <div>
+                  <label htmlFor="reg-phone" style={{ display: 'block', marginBottom: '0.3rem', fontSize: '0.9rem', color: 'var(--text)' }}>Phone Number</label>
+                  <input id="reg-phone" required type="text" name="phone" value={formData.phone} onChange={handleInputChange} style={{ width: '100%', padding: '0.8rem', borderRadius: '0.5rem', border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text)' }} />
+                </div>
+                <div>
+                  <label htmlFor="reg-email" style={{ display: 'block', marginBottom: '0.3rem', fontSize: '0.9rem', color: 'var(--text)' }}>Email</label>
+                  <input id="reg-email" required type="email" name="email" value={formData.email} onChange={handleInputChange} style={{ width: '100%', padding: '0.8rem', borderRadius: '0.5rem', border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text)' }} />
+                </div>
               </div>
               <div>
                 <label htmlFor="reg-qual" style={{ display: 'block', marginBottom: '0.3rem', fontSize: '0.9rem', color: 'var(--text)' }}>Qualification</label>

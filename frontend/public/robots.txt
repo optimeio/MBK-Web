@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://website.mbktechnologies.info/sitemap.xml

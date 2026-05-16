@@ -20,6 +20,43 @@ function AdminDashboard() {
   const [courseFilter, setCourseFilter] = useState('');
   const [sortOrder, setSortOrder] = useState('desc'); // desc or asc
 
+  const fetchOverview = async () => {
+    try {
+      const res = await axios.get('/api/admin/overview');
+      setOverviewData(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchCourses = async () => {
+    try {
+      const res = await axios.get('/api/admin/courses');
+      setCourses(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchRegistrations = async () => {
+    try {
+      const res = await axios.get('/api/admin/registrations');
+      setRegistrations(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchMessages = async () => {
+    try {
+      const res = await axios.get('/api/admin/messages');
+      setMessages(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (isAuthenticated) {
       fetchOverview();
@@ -28,43 +65,16 @@ function AdminDashboard() {
       fetchMessages();
     }
   }, [isAuthenticated, activeTab]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post('/api/admin/login', { email, password });
       if (res.data.token) setIsAuthenticated(true);
-    } catch (err) {
+    } catch {
       alert('Invalid credentials');
     }
-  };
-
-  const fetchOverview = async () => {
-    try {
-      const res = await axios.get('/api/admin/overview');
-      setOverviewData(res.data);
-    } catch (err) { console.error(err); }
-  };
-
-  const fetchCourses = async () => {
-    try {
-      const res = await axios.get('/api/admin/courses');
-      setCourses(res.data);
-    } catch (err) { console.error(err); }
-  };
-
-  const fetchRegistrations = async () => {
-    try {
-      const res = await axios.get('/api/admin/registrations');
-      setRegistrations(res.data);
-    } catch (err) { console.error(err); }
-  };
-
-  const fetchMessages = async () => {
-    try {
-      const res = await axios.get('/api/admin/messages');
-      setMessages(res.data);
-    } catch (err) { console.error(err); }
   };
 
   const handleCourseSubmit = async (e) => {

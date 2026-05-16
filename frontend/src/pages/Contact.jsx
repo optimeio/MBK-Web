@@ -2,6 +2,7 @@ import Icon from '../components/Icon';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
+import { Particle } from '../utils/Particle';
 import '../index.css';
 
 function Contact({ id, hideHero }) {
@@ -33,32 +34,7 @@ function Contact({ id, hideHero }) {
       const particles = [];
       const count = Math.min(70, Math.floor(W * H / 18000));
 
-      class Particle {
-        constructor() { this.reset(); }
-        reset() {
-          this.x = Math.random() * W;
-          this.y = Math.random() * H;
-          this.size = Math.random() * 1.5 + 0.4;
-          this.speedX = (Math.random() - 0.5) * 0.4;
-          this.speedY = (Math.random() - 0.5) * 0.4;
-          this.opacity = Math.random() * 0.5 + 0.1;
-          const colors = ['249,115,22', '225,29,72', '139,92,246', '255,255,255'];
-          this.color = colors[Math.floor(Math.random() * colors.length)];
-        }
-        update() {
-          this.x += this.speedX;
-          this.y += this.speedY;
-          if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
-        }
-        draw() {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${this.color},${this.opacity})`;
-          ctx.fill();
-        }
-      }
-
-      for (let i = 0; i < count; i++) particles.push(new Particle());
+      for (let i = 0; i < count; i++) particles.push(new Particle(ctx, W, H));
 
       function connectParticles() {
         for (let a = 0; a < particles.length; a++) {
@@ -89,6 +65,7 @@ function Contact({ id, hideHero }) {
       handleResize = () => {
         W = canvas.width = window.innerWidth;
         H = canvas.height = window.innerHeight;
+        particles.forEach(p => p.setBounds(W, H));
       };
       window.addEventListener('resize', handleResize);
     }
@@ -98,7 +75,7 @@ function Contact({ id, hideHero }) {
       if (handleResize) window.removeEventListener('resize', handleResize);
       revealObserver.disconnect();
     };
-  }, []);
+  }, [hideHero]);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -126,7 +103,7 @@ function Contact({ id, hideHero }) {
           <Helmet>
             <title>Contact Us | MBK Technology Salem</title>
             <meta name="description" content="Get in touch with MBK Technology for admissions, corporate training, or institutional trainer deployment in Salem. Available via WhatsApp, phone, and email." />
-            <link rel="canonical" href="https://mbktechnologies.info/contact" />
+            <link rel="canonical" href="https://website.mbktechnologies.info/contact" />
           </Helmet>
           <canvas id="particle-canvas" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1, pointerEvents: 'none' }}></canvas>
         </>

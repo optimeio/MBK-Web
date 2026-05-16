@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  frontend:
+    image: mbkservices:latest
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - mbk-network
+
+  adminportal:
+    image: mbkservices/admin:latest
+    build:
+      context: ./frontend
+    ports:
+      - "3001:80"   # 👈 ADD THIS
+    depends_on:
+      - backend
+    networks:
+      - mbk-network
+
+  backend:
+    image: mbkservices/backend:latest
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"   # 👈 ADD THIS
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+    networks:
+      - mbk-network
+
+networks:
+  mbk-network:
+    driver: bridge

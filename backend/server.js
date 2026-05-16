@@ -4,15 +4,45 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const compression = require('compression');
 
+const path = require('path');
+const fs = require('fs');
+
 const app = express();
 app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
+// Configure allowed origins. Add additional origins via ENV if needed.
+const allowedOrigins = [
+  'https://mbktechnologies.info',
+  'https://website.mbktechnologies.info',
+  'https://mbk-web-1.onrender.com',
+  process.env.FRONTEND_URL, // optional
+  process.env.RENDER_URL, // optional (e.g. https://mbk-web-1.onrender.com)
+  'http://localhost:5173',
+  'http://localhost:5174'
+].filter(Boolean);
+
 app.use(cors({
-  origin: ['https://mbktechnologies.info', 'http://localhost:5173', 'http://localhost:5174'],
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    return callback(new Error('CORS policy: This origin is not allowed'));
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
+
+// Serve static files from the React frontend app if present
+const frontendDist = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  console.log('Serving frontend from', frontendDist);
+} else {
+  console.warn('Frontend dist folder not found at', frontendDist);
+}
+
 
 // Connect to MongoDB
 const dbURI = process.env.MONGO_URI;
@@ -88,12 +118,12 @@ app.post('/api/register', async (req, res) => {
   try {
     const newReg = new Registration(req.body);
     await newReg.save();
-    
+
     // Fetch course title if courseId exists
     let courseName = 'General Info';
     if (req.body.courseId) {
-        const course = await Course.findById(req.body.courseId);
-        if (course) courseName = course.title;
+      const course = await Course.findById(req.body.courseId);
+      if (course) courseName = course.title;
     }
 
     // Send Notification to MBK owner
@@ -115,10 +145,10 @@ app.post('/api/register', async (req, res) => {
 
     // Auto-Reply to Student
     const autoReplyOptions = {
-        from: '"MBK Technology" <mbktechnologies8@gmail.com>',
-        to: req.body.email,
-        subject: `Registration Confirmed - MBK Technology`,
-        html: `
+      from: '"MBK Technology" <mbktechnologies8@gmail.com>',
+      to: req.body.email,
+      subject: `Registration Confirmed - MBK Technology`,
+      html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
                 <div style="background-color: #0f172a; padding: 20px; text-align: center;">
                     <img src="https://i.ibb.co/4wmJCKRq/training.png" alt="MBK Technology Logo" style="height: 50px;">
@@ -155,10 +185,10 @@ app.post('/api/contact', async (req, res) => {
 
     // Send Notification to MBK owner
     const mailOptions = {
-        from: '"MBK Technology Website" <mbktechnologies8@gmail.com>',
-        to: 'mbktechnologies8@gmail.com',
-        subject: `New Contact Form Submission: ${req.body.name}`,
-        html: `
+      from: '"MBK Technology Website" <mbktechnologies8@gmail.com>',
+      to: 'mbktechnologies8@gmail.com',
+      subject: `New Contact Form Submission: ${req.body.name}`,
+      html: `
           <h3>New Message Received</h3>
           <p><strong>Name:</strong> ${req.body.name}</p>
           <p><strong>Phone:</strong> ${req.body.phone}</p>
@@ -170,10 +200,10 @@ app.post('/api/contact', async (req, res) => {
 
     // Auto-Reply to User
     const autoReplyOptions = {
-        from: '"MBK Technology" <mbktechnologies8@gmail.com>',
-        to: req.body.email,
-        subject: `We've Received Your Message - MBK Technology`,
-        html: `
+      from: '"MBK Technology" <mbktechnologies8@gmail.com>',
+      to: req.body.email,
+      subject: `We've Received Your Message - MBK Technology`,
+      html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
                 <div style="background-color: #0f172a; padding: 20px; text-align: center;">
                     <img src="https://i.ibb.co/4wmJCKRq/training.png" alt="MBK Technology Logo" style="height: 50px;">
@@ -263,7 +293,7 @@ app.get('/api/admin/overview', async (req, res) => {
     const coursesCount = await Course.countDocuments({ status: 'Active' });
     const registrationsCount = await Registration.countDocuments();
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
     const todayRegistrationsCount = await Registration.countDocuments({ createdAt: { $gte: today } });
     const recentRegistrations = await Registration.find().sort({ createdAt: -1 }).limit(5).populate('courseId');
     const messagesCount = await Message.countDocuments();
@@ -283,9 +313,22 @@ app.get('/api/admin/messages', async (req, res) => {
 });
 
 // Simple Root Route for API Health Check
-app.get('/', (req, res) => {
+app.get('/health', (req, res) => {
   res.send('MBK Technology Backend API is running gracefully.');
 });
+
+// Serve React's index.html for non-API GET requests to support client-side routing.
+// If frontend build exists, serve index.html for client-side routes.
+if (fs.existsSync(frontendDist)) {
+  app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+} else {
+  // Fallback for API-only deployments
+  app.get(/^\/(?!api).*/, (req, res) => {
+    res.send('MBK Technology Backend is running. Frontend not served from this instance.');
+  });
+}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
